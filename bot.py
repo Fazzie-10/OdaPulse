@@ -3,6 +3,7 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler, ContextTypes
 from config import Config
 import feeds, db, notifier
+from keep_alive import keep_alive
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -84,6 +85,7 @@ async def periodic_cleanup(context: ContextTypes.DEFAULT_TYPE):
 
 
 def main():
+    keep_alive()  # Start the background web server for Render
     app = Application.builder().token(Config.BOT_TOKEN).build()
 
     # Commands

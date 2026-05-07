@@ -66,15 +66,19 @@ python bot.py
 
 ---
 
-## Deploy to Railway
+## Deploy to Render (Free Tier)
+
+Render's free tier requires apps to be "Web Services" and puts them to sleep after 15 minutes of inactivity. We've added a background `keep_alive` web server to the bot to handle this!
 
 1. Push this repo to GitHub
-2. Create a new project on [railway.app](https://railway.app)
+2. Create a new **Web Service** on [Render.com](https://render.com)
 3. Connect your GitHub repository
-4. Add the three environment variables (`BOT_TOKEN`, `SUPABASE_URL`, `SUPABASE_KEY`)
-5. Railway auto-detects `requirements.txt` and starts the bot
+4. Set the **Build Command** to: `pip install -r requirements.txt`
+5. Set the **Start Command** to: `python bot.py`
+6. Add the three environment variables (`BOT_TOKEN`, `SUPABASE_URL`, `SUPABASE_KEY`) in the Environment tab
+7. Click **Deploy Web Service**
 
-> Railway's free tier keeps long-running Python processes alive 24/7 — ideal for polling bots.
+> **IMPORTANT:** Render will still put the bot to sleep after 15 minutes. To keep it running 24/7, copy the Render URL it gives you (e.g. `pinnacle-bot-xxx.onrender.com`) and add it as an HTTP Monitor on [UptimeRobot.com](https://uptimerobot.com) to ping it every 10 minutes.
 
 ---
 
