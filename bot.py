@@ -17,7 +17,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /start command — subscribe the user to news updates."""
     db.add_subscriber(update.effective_user.id)
     await update.message.reply_text(
-        "👋 Welcome to <b>Pinnacle DaaS News Bot!</b>\n\n"
+        "👋 Welcome to <b>OdaPulse!</b>\n\n"
         "You are now subscribed to real-time updates from Nigerian and Foreign outlets.\n\n"
         "📰 I check sources every 60 seconds.\n"
         "Type /help to see all commands.",
@@ -29,7 +29,7 @@ async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /stop command — unsubscribe the user from news updates."""
     db.remove_subscriber(update.effective_user.id)
     await update.message.reply_text(
-        "👋 You've been unsubscribed from Pinnacle DaaS.\n\n"
+        "👋 You've been unsubscribed from OdaPulse.\n\n"
         "Send /start anytime to re-subscribe.",
         parse_mode='HTML'
     )
@@ -38,7 +38,7 @@ async def stop(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def help_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /help command — show available commands."""
     await update.message.reply_text(
-        "📖 <b>Pinnacle DaaS — Commands</b>\n\n"
+        "📖 <b>OdaPulse — Commands</b>\n\n"
         "/start — Subscribe to news updates\n"
         "/stop — Unsubscribe from updates\n"
         "/help — Show this message\n\n"
@@ -100,7 +100,7 @@ def main():
     midnight = datetime.time(hour=0, minute=0, tzinfo=datetime.timezone.utc)
     job_queue.run_daily(periodic_cleanup, time=midnight)  # Runs once per day at midnight UTC
 
-    print("Pinnacle DaaS Bot is Live...")
+    print("OdaPulse Bot is Live...")
     app.run_polling()
 
 

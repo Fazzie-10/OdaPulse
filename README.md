@@ -1,4 +1,4 @@
-# 📰 Pinnacle DaaS — Telegram RSS News Bot
+# 📰 OdaPulse — Telegram RSS News Bot
 
 A real-time Telegram bot that polls Nigerian and international RSS feeds every 60 seconds and broadcasts new articles to subscribed users.
 
@@ -25,7 +25,7 @@ A real-time Telegram bot that polls Nigerian and international RSS feeds every 6
 
 1. Open Telegram and search for **@BotFather**
 2. Send `/newbot`
-3. Choose a display name (e.g. "Pinnacle DaaS News") and a username (must end in `bot`, e.g. `PinnacleDaaSBot`)
+3. Choose a display name (e.g. "OdaPulse News") and a username (must end in `bot`, e.g. `OdaPulseBot`)
 4. BotFather replies with your **bot token** — copy it
 
 ### 2. Supabase
@@ -78,7 +78,7 @@ Render's free tier requires apps to be "Web Services" and puts them to sleep aft
 6. Add the three environment variables (`BOT_TOKEN`, `SUPABASE_URL`, `SUPABASE_KEY`) in the Environment tab
 7. Click **Deploy Web Service**
 
-> **IMPORTANT:** Render will still put the bot to sleep after 15 minutes. To keep it running 24/7, copy the Render URL it gives you (e.g. `pinnacle-bot-xxx.onrender.com`) and add it as an HTTP Monitor on [UptimeRobot.com](https://uptimerobot.com) to ping it every 10 minutes.
+> **IMPORTANT:** Render will still put the bot to sleep after 15 minutes. To keep it running 24/7, copy the Render URL it gives you (e.g. `odapulse-bot-xxx.onrender.com`) and add it as an HTTP Monitor on [UptimeRobot.com](https://uptimerobot.com) to ping it every 10 minutes.
 
 ---
 
