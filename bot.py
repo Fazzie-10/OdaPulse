@@ -4,6 +4,7 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 from config import Config
 import feeds, db, notifier
 from keep_alive import keep_alive
+import datetime
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -96,7 +97,8 @@ def main():
     # Background Tasks
     job_queue = app.job_queue
     job_queue.run_repeating(check_feeds, interval=Config.POLL_INTERVAL, first=10)
-    job_queue.run_daily(periodic_cleanup, time=None)  # Runs once per day at midnight UTC
+    midnight = datetime.time(hour=0, minute=0, tzinfo=datetime.timezone.utc)
+    job_queue.run_daily(periodic_cleanup, time=midnight)  # Runs once per day at midnight UTC
 
     print("Pinnacle DaaS Bot is Live...")
     app.run_polling()
