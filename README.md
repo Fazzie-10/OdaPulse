@@ -39,7 +39,8 @@ CREATE TABLE seen_articles (
 );
 
 CREATE TABLE subscribers (
-    user_id BIGINT PRIMARY KEY
+    user_id BIGINT PRIMARY KEY,
+    preferences JSONB DEFAULT '{"sources": ["PUNCH", "DAILY TRUST", "HUMANGLE", "SAHARA REPORTERS", "BBC WORLD", "PROPUBLICA"]}'
 );
 ```
 
