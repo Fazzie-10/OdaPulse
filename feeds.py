@@ -1,5 +1,9 @@
 import logging
 import feedparser
+import time
+
+# Set a standard browser User-Agent to prevent 403 Forbidden errors and CDNs treating it as a bot
+feedparser.USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +26,12 @@ def fetch_latest_articles():
     for category, sources in FEEDS.items():
         for source in sources:
             try:
-                feed = feedparser.parse(source['url'])
+                # Add cache-busting query parameter to force fresh results from CDNs
+                url = source['url']
+                separator = '&' if '?' in url else '?'
+                cache_busted_url = f"{url}{separator}nocache={int(time.time())}"
+                
+                feed = feedparser.parse(cache_busted_url)
                 if feed.bozo:
                     logger.warning(f"Feed parse issue for {source['name']}: {feed.bozo_exception}")
                 for entry in feed.entries[:5]:  # Check top 5
