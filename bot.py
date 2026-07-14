@@ -237,14 +237,18 @@ async def discover_and_process():
             full_text = await fetch_article_text(art["link"])
             if full_text:
                 ai_result = ai_service.tag_article(full_text)
-                db.save_article_meta(
-                    url=art["link"],
-                    title=art["title"],
-                    source=art.get("name", art.get("domain", "Unknown")),
-                    source_type=art.get("source_type", "rss"),
-                    tags=ai_result["tags"],
-                    gist=ai_result["gist"],
-                )
+                tags = ai_result["tags"] or ALL_TAGS[:]
+            else:
+                tags = ALL_TAGS[:]
+                ai_result = {"gist": ""}
+            db.save_article_meta(
+                url=art["link"],
+                title=art["title"],
+                source=art.get("name", art.get("domain", "Unknown")),
+                source_type=art.get("source_type", "rss"),
+                tags=tags,
+                gist=ai_result.get("gist", ""),
+            )
             db.save_article(art["link"])
             processed += 1
 

@@ -45,13 +45,14 @@ def tag_article(text):
         return {"tags": [], "gist": ""}
 
 def compose_digest(articles, daily=True):
-    period_label = "Cover the past 24 hours." if daily else "Cover the past 7 days, breaking it down by day. Start with a weekly overview paragraph."
-    articles_text = "\n\n".join(
-        f"[{a.get('source', 'Unknown')}] {a.get('title', 'No title')}\n{a.get('gist', '')}"
-        for a in articles
-    )
-    prompt = DIGEST_PROMPT.format(period_label=period_label, articles_text=articles_text)
+    period = "daily" if daily else "weekly"
     try:
+        period_label = "Cover the past 24 hours." if daily else "Cover the past 7 days, breaking it down by day. Start with a weekly overview paragraph."
+        articles_text = "\n\n".join(
+            f"[{a.get('source', 'Unknown')}] {a.get('title', 'No title')}\n{a.get('gist', '')}"
+            for a in articles
+        )
+        prompt = DIGEST_PROMPT.format(period_label=period_label, articles_text=articles_text)
         response = client.models.generate_content(
             model="gemini-2.0-flash",
             contents=prompt,
@@ -59,4 +60,5 @@ def compose_digest(articles, daily=True):
         return response.text
     except Exception as e:
         logger.error(f"Digest composition failed: {e}")
-        return "Unable to generate digest at this time."
+        lines = [f"• {a.get('title', 'No title')} — {a.get('source', 'Unknown')}" for a in articles]
+        return f"Here's your {period} roundup of Nigeria-related news:\n\n" + "\n".join(lines)

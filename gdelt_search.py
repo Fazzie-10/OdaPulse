@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import traceback
 from datetime import datetime, timezone, timedelta
 from gdeltdoc import GdeltDoc, Filters
 
@@ -38,5 +39,5 @@ async def search_diaspora_news(hours_back=24, max_records=50):
             })
         return results
     except Exception as e:
-        logger.error(f"GDELT search failed: {e}")
+        logger.error(f"GDELT search failed: {traceback.format_exc()}")
         return []
