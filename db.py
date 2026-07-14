@@ -70,3 +70,56 @@ def get_user_prefs(user_id):
             prefs = DEFAULT_PREFS
         return prefs.get("sources", DEFAULT_PREFS["sources"])
     return []
+
+def save_article_meta(url, title, source, source_type, tags, gist, published_at=None):
+    data = {
+        "url": url,
+        "title": title,
+        "source": source,
+        "source_type": source_type,
+        "tags": tags,
+        "gist": gist,
+    }
+    if published_at:
+        data["published_at"] = published_at
+    try:
+        supabase.table("articles").upsert(data, on_conflict="url").execute()
+    except Exception as e:
+        logger.warning(f"Failed to save article meta: {e}")
+
+def get_article_by_url(url):
+    try:
+        res = supabase.table("articles").select("*").eq("url", url).execute()
+        return res.data[0] if res.data else None
+    except Exception as e:
+        logger.warning(f"Failed to get article: {e}")
+        return None
+
+def get_articles_by_tags(tags, since=None, limit=100):
+    try:
+        query = supabase.table("articles").select("*")
+        if since:
+            query = query.gt("discovered_at", since.isoformat())
+        res = query.order("discovered_at", desc=True).limit(limit).execute()
+        articles = res.data
+        if tags:
+            tag_set = set(tags)
+            articles = [a for a in articles if tag_set & set(a.get("tags", []))]
+        return articles
+    except Exception as e:
+        logger.warning(f"Failed to get articles by tags: {e}")
+        return []
+
+def get_user_subscriber_prefs(user_id):
+    try:
+        res = supabase.table("subscribers").select("*").eq("user_id", user_id).execute()
+        return res.data[0] if res.data else None
+    except Exception as e:
+        logger.warning(f"Failed to get user prefs: {e}")
+        return None
+
+def update_user_subscriber_prefs(user_id, **kwargs):
+    try:
+        supabase.table("subscribers").update(kwargs).eq("user_id", user_id).execute()
+    except Exception as e:
+        logger.warning(f"Failed to update user prefs: {e}")
