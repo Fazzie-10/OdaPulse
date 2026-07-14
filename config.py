@@ -12,7 +12,10 @@ class Config:
     BOT_TOKEN = os.getenv("BOT_TOKEN")
     SUPABASE_URL = os.getenv("SUPABASE_URL")
     SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+    GEMINI_KEY = os.getenv("GEMINI_KEY")
+    RESEND_KEY = os.getenv("RESEND_KEY")
     POLL_INTERVAL = int(os.getenv("POLL_INTERVAL", "60"))
+    GDELT_INTERVAL = int(os.getenv("GDELT_INTERVAL", "900"))
 
 # Validation: Fail fast and explicitly if variables are missing
 missing_vars = []
@@ -22,6 +25,10 @@ if not Config.SUPABASE_URL:
     missing_vars.append("SUPABASE_URL")
 if not Config.SUPABASE_KEY:
     missing_vars.append("SUPABASE_KEY")
+if not Config.GEMINI_KEY:
+    missing_vars.append("GEMINI_KEY")
+if not Config.RESEND_KEY:
+    missing_vars.append("RESEND_KEY")
 
 if missing_vars:
     error_msg = (
