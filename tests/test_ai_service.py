@@ -24,4 +24,5 @@ def test_compose_digest_returns_string_on_failure(mock_genai):
     from ai_service import compose_digest
     result = compose_digest([{"title": "Test", "gist": "Gist", "source": "BBC"}], daily=True)
     assert isinstance(result, str)
-    assert "Unable to generate" in result
+    assert "Test" in result
+    assert "BBC" in result

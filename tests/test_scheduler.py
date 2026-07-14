@@ -14,9 +14,9 @@ def test_get_due_users_returns_list(mock_supabase):
 
 def test_get_due_users_filters_by_hour(mock_supabase):
     mock_data = [
-        {"user_id": 1, "preferences": {"delivery_time": "08:00", "delivery_frequency": "daily"},
+        {"user_id": 1, "delivery_time": "08:00", "delivery_frequency": "daily",
          "last_digest_sent": None, "email": "", "interest_tags": []},
-        {"user_id": 2, "preferences": {"delivery_time": "14:00", "delivery_frequency": "daily"},
+        {"user_id": 2, "delivery_time": "14:00", "delivery_frequency": "daily",
          "last_digest_sent": None, "email": "", "interest_tags": []},
     ]
     mock_supabase.table.return_value.select.return_value.execute.return_value.data = mock_data
