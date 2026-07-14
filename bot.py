@@ -1,6 +1,5 @@
 import logging
-import datetime
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, time, timezone, timedelta
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters
 from config import Config
@@ -315,7 +314,7 @@ def main():
     job_queue.run_once(silent_startup_poll, when=0)
     job_queue.run_repeating(check_feeds, interval=Config.POLL_INTERVAL, first=10)
     job_queue.run_repeating(dispatch_digest, interval=3600, first=120)
-    midnight = datetime.time(hour=0, minute=0, tzinfo=datetime.timezone.utc)
+    midnight = time(hour=0, minute=0, tzinfo=timezone.utc)
     job_queue.run_daily(periodic_cleanup, time=midnight)
 
     print("OdaPulse Bot is Live...")
