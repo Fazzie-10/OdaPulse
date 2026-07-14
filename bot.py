@@ -3,7 +3,7 @@ from datetime import datetime, time, timezone, timedelta
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes, MessageHandler, filters
 from config import Config
-import feeds, db, notifier, gdelt_search, ai_service, scheduler, emailer
+import feeds, db, notifier, gdelt_search, ai_service, scheduler, emailer, keep_alive
 from trafilatura import fetch_url, extract
 
 logging.basicConfig(
@@ -299,6 +299,7 @@ async def periodic_cleanup(context):
     db.cleanup_old_articles(days=7)
 
 def main():
+    keep_alive.keep_alive()
     app = Application.builder().token(Config.BOT_TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
