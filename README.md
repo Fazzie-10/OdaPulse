@@ -1,62 +1,81 @@
-# 📰 OdaPulse — Telegram RSS News Bot
+# 📰 OdaPulse — AI-Powered Nigerian News Agent
 
-A real-time Telegram bot that polls Nigerian and international RSS feeds every 60 seconds and broadcasts new articles to subscribed users.
+A Telegram bot + AI agent that tracks Nigerian news across local and diaspora media, generates AI summaries, and delivers personalized digests to your Telegram or email — on your schedule.
 
 ## Architecture
 
 | Module | Responsibility |
-|---|---|
+|--------|---------------|
 | `bot.py` | Entry point, command handlers, job queue |
-| `feeds.py` | RSS feed configuration & parsing |
-| `db.py` | Supabase persistence (deduplication + subscriptions) |
-| `notifier.py` | Telegram message formatting (HTML) |
+| `feeds.py` | RSS fetching (async parallel) |
+| `gdelt_search.py` | GDELT diaspora news discovery |
+| `ai_service.py` | Gemini tagging + digest composition |
+| `scheduler.py` | Per-user digest scheduling |
+| `emailer.py` | Resend email delivery |
+| `db.py` | Supabase CRUD |
+| `notifier.py` | Message formatting (Telegram + email) |
 | `config.py` | Environment variable management |
+| `landing/` | Static HTML page |
+
+## Pipeline
+
+```
+RSS feeds (30s) + GDELT API (15min)
+         ↓
+    Dedup + AI tag & gist
+         ↓
+    Store in Supabase
+         ↓
+    Match user interests → Compose digest
+         ↓
+    Deliver via Telegram / Email
+```
 
 ## News Sources
 
-**Nigerian 🇳🇬** — Punch, Daily Trust, HumAngle, Sahara Reporters  
+**Nigerian 🇳🇬** — Punch, Daily Trust, HumAngle, Sahara Reporters
 **International 🌍** — BBC World, ProPublica
+**Diaspora 🌐** — Discovered via GDELT (US, UK, Canadian media covering Nigeria)
+
+## Track Topics
+
+Politics | Economy/Finance | Security/Conflict | Diaspora Policy | Tech/Innovation | Culture/Sports | Health/Education
 
 ---
 
 ## Setup
 
-### 1. Telegram Bot Token
+### 1. API Keys Needed
 
-1. Open Telegram and search for **@BotFather**
-2. Send `/newbot`
-3. Choose a display name (e.g. "OdaPulse News") and a username (must end in `bot`, e.g. `OdaPulseBot`)
-4. BotFather replies with your **bot token** — copy it
+| Service | Where To Get |
+|---------|-------------|
+| Telegram Bot Token | [@BotFather](https://t.me/botfather) |
+| Supabase URL + Key | [supabase.com](https://supabase.com) (your project settings) |
+| Gemini API Key | [aistudio.google.com](https://aistudio.google.com) → Get API Key |
+| Resend API Key | [resend.com](https://resend.com) → Sign up → API Keys |
+| GDELT | No key needed (free API) |
 
-### 2. Supabase
+### 2. Supabase Database
 
-Create a free project at [supabase.com](https://supabase.com) and run this SQL in the SQL Editor:
-
-```sql
-CREATE TABLE seen_articles (
-    url TEXT PRIMARY KEY,
-    seen_at TIMESTAMPTZ DEFAULT NOW()
-);
-
-CREATE TABLE subscribers (
-    user_id BIGINT PRIMARY KEY,
-    preferences JSONB DEFAULT '{"sources": ["PUNCH", "DAILY TRUST", "HUMANGLE", "SAHARA REPORTERS", "BBC WORLD", "PROPUBLICA"]}'
-);
-```
+Run `migration.sql` in your Supabase SQL Editor to create the required tables.
 
 ### 3. Environment Variables
 
-Copy `.env.example` to `.env` and fill in your credentials:
+Copy `.env.example` to `.env` and fill in all credentials:
 
 ```bash
 cp .env.example .env
 ```
 
 | Variable | Description |
-|---|---|
+|----------|-------------|
 | `BOT_TOKEN` | Telegram bot token from BotFather |
 | `SUPABASE_URL` | Your Supabase project URL |
 | `SUPABASE_KEY` | Your Supabase anon/public key |
+| `GEMINI_KEY` | Your Gemini API key |
+| `RESEND_KEY` | Your Resend API key |
+| `POLL_INTERVAL` | Feed check interval in seconds (default: 60) |
+| `GDELT_INTERVAL` | GDELT query interval in seconds (default: 900) |
 
 ### 4. Install & Run Locally
 
@@ -67,29 +86,26 @@ python bot.py
 
 ---
 
-## Deploy to Render (Free Tier)
-
-Render's free tier requires apps to be "Web Services" and puts them to sleep after 15 minutes of inactivity. We've added a background `keep_alive` web server to the bot to handle this!
+## Deploy to Railway
 
 1. Push this repo to GitHub
-2. Create a new **Web Service** on [Render.com](https://render.com)
-3. Connect your GitHub repository
-4. Set the **Build Command** to: `pip install -r requirements.txt`
-5. Set the **Start Command** to: `python bot.py`
-6. Add the three environment variables (`BOT_TOKEN`, `SUPABASE_URL`, `SUPABASE_KEY`) in the Environment tab
-7. Click **Deploy Web Service**
-
-> **IMPORTANT:** Render will still put the bot to sleep after 15 minutes. To keep it running 24/7, copy the Render URL it gives you (e.g. `odapulse-bot-xxx.onrender.com`) and add it as an HTTP Monitor on [UptimeRobot.com](https://uptimerobot.com) to ping it every 10 minutes.
+2. Connect the repo on [Railway](https://railway.app)
+3. Railway auto-detects the `Procfile` — no extra config needed
+4. Set all 6 environment variables in Railway's dashboard
+5. Deploy — Railway keeps the bot running 24/7 with no sleep
 
 ---
 
 ## User Commands
 
 | Command | Description |
-|---|---|
+|---------|-------------|
 | `/start` | Subscribe to news updates |
 | `/stop` | Unsubscribe from updates |
-| `/help` | Show available commands and sources |
+| `/settings` | Configure sources, topics, delivery time, channel, frequency |
+| `/email your@email.com` | Set your email for digest delivery |
+| `/digest` | Request an immediate digest |
+| `/help` | Show all commands |
 
 ---
 
